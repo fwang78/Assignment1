@@ -102,3 +102,89 @@ print("The accuracy is " + str(accuracy))
 ```
 
 Let's also use cross validation with 5 folds to see how well our model performs.
+
+Create an empty, unlearned tree
+```
+tree = DecisionTreeClassifier(criterion="entropy")
+```    
+
+This will get us 10-fold cross validation accuracy with our tree and our data
+
+We can do this in one line!
+```
+cross_fold_accuracies = cross_val_score(tree, X, Y, scoring="accuracy", cv=5)
+```   
+Average accuracy
+```
+average_cross_fold_accuracy = np.mean(cross_fold_accuracies)
+for fold in cross_fold_accuracies:
+    print(fold)
+print(average_cross_fold_accuracy)
+```
+
+### 4. Creating a simple learning curve
+
+```
+import random
+random.seed(9001)
+```
+
+Here are some percentages to get you started. Feel free to try more!
+```
+training_percentages = [0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80]
+accuracies = []
+
+for training_percentage in training_percentages:
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=training_percentage)
+    logistic = LogisticRegression()
+    tree = DecisionTreeClassifier(criterion="entropy")
+    logistic.fit(X_train, Y_train)
+    tree.fit(X_train, Y_train)
+    Y_test_predicted = tree.predict(X_test)
+    acc = accuracy_score(Y_test_predicted, Y_test)
+    accuracies.append(acc)
+```
+
+We want to plot our results. What list should we use for the x-axis? What about the y-axis?
+```
+plt.plot(training_percentages, accuracies)
+plt.show()
+```
+### 5. Creating a simple fitting curve
+
+Let's fit our training data size to 80%
+```
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.80)
+```
+Let's try different max depths for a decision tree
+```
+max_depths = range(1, 100)
+accuracies = []
+accuracies_train = []
+
+for max_depth in max_depths:
+    
+    tree = DecisionTreeClassifier(criterion="entropy", max_depth=max_depth)
+    
+    
+    tree.fit(X_train, Y_train)
+    
+   
+    Y_test_predicted  = tree.predict(X_test)
+    Y_train_predicted = tree.predict(X_train)
+    accuracies.append(accuracy_score(Y_test_predicted, Y_test))
+    accuracies_train.append(accuracy_score(Y_train_predicted, Y_train))
+
+
+plt.plot(max_depths, accuracies)
+plt.ylabel("Accuracy")
+plt.xlabel("Max depth (model complexity)")
+plt.show()
+```
+See the stark difference between training set accuracies..!
+```
+plot(max_depths, accuracies_train)
+plt.ylabel("Accuracy")
+plt.xlabel("Max depth (model complexity)")
+plt.show()
+```
