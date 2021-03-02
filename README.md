@@ -25,5 +25,16 @@ from sklearn.model_selection import cross_val_score
 ```
 ### 2. Data
 We're going to use a mail response data set from a real direct marketing campaign located in files/mailing.csv.
+You can download the files from repository
 
-You can download the files from http://bit.ly/mailingData.
+Our goal is to build a model to predict if people will give during the current campaign (this is the attribute called "class").
+
+Read data using pandas
+```
+data = pd.read_csv("files/mailing.csv")
+```
+Split into X and Y
+```
+X = data.drop(['class'], 1)
+Y = data['class']
+```
